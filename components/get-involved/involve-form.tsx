@@ -1,6 +1,6 @@
 "use client";
-import { PhotoUpload } from "./photo-upload";
-import { useMemo, useState } from "react";
+
+import { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,68 +17,73 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  formFields,
-  ways,
-  type FormField,
-  type Way,
-} from "@/lib/mock/get-involved";
+import { PhotoUpload } from "./photo-upload";
+import { roleOptions, partnerOptions } from "@/lib/mock/get-involved";
 
-const PATHS = ways.filter((w) => w.id !== "donate").map((w) => w.id);
+type Path = "volunteer" | "partner";
+const PATHS: Path[] = ["volunteer", "partner"];
 
-function buildSchema(fields: FormField[]) {
-  const shape: Record<string, z.ZodTypeAny> = {};
-  for (const f of fields) {
-    if (f.type === "file") continue;
-    let base: z.ZodTypeAny =
-      f.type === "email" ? z.string().email("Enter a valid email") : z.string();
-    if (f.required) {
-      base = (base as z.ZodString).min(
-        f.type === "tel" ? 9 : 2,
-        `${f.label} is required`,
-      );
-    }
-    shape[f.name] = f.required ? base : base.optional();
-  }
-  return z.object(shape);
-}
+const shared = {
+  name: z.string().min(2, "Name is required"),
+  email: z.string().email("Enter a valid email"),
+  phone: z.string().min(9, "Phone is required"),
+  location: z.string().min(2, "Let us know where you're based"),
+  message: z.string().optional(),
+};
+
+const volunteerSchema = z.object({
+  ...shared,
+  role: z.string().min(1, "Pick where you'd like to help"),
+});
+
+const partnerSchema = z.object({
+  ...shared,
+  organisation: z.string().min(2, "Organisation is required"),
+  partnerType: z.string().min(1, "Pick how you'd like to partner"),
+});
+
+type Values = z.infer<typeof volunteerSchema> &
+  Partial<z.infer<typeof partnerSchema>>;
 
 export function InvolveForm() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
 
-  // ?as=partner opens the partner path
-  const fromUrl = params.get("as") as Way["id"] | null;
-  const initial = fromUrl && PATHS.includes(fromUrl) ? fromUrl : "volunteer";
+  const fromUrl = params.get("as") as Path | null;
+  const path: Path = fromUrl && PATHS.includes(fromUrl) ? fromUrl : "volunteer";
 
-  const [path, setPath] = useState<Way["id"]>(initial);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",
   );
   const [photo, setPhoto] = useState<File | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const activePath = fromUrl && PATHS.includes(fromUrl) ? fromUrl : path;
-  const fields = useMemo(
-    () =>
-      formFields.filter(
-        (f) => f.type !== "file" && (!f.showFor || f.showFor.includes(path)),
-      ),
-    [path],
-  );
+  const isVolunteer = path === "volunteer";
 
-  function choosePath(id: Way["id"]) {
-    setPath(id);
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Values>({
+    resolver: zodResolver(
+      isVolunteer ? volunteerSchema : partnerSchema,
+    ) as never,
+  });
+
+  function choosePath(id: Path) {
+    reset();
+    setPhoto(null);
     router.replace(`${pathname}?as=${id}`, { scroll: false });
   }
 
   async function share() {
-    const url = `${window.location.origin}${pathname}?as=${activePath}#form`;
-    const title =
-      activePath === "partner"
-        ? "Partner with Care Connect GH"
-        : "Volunteer with Care Connect GH";
+    const url = `${window.location.origin}${pathname}?as=${path}#form`;
+    const title = isVolunteer
+      ? "Volunteer with Care Connect GH"
+      : "Partner with Care Connect GH";
     if (navigator.share) {
       try {
         await navigator.share({ title, url });
@@ -92,21 +97,11 @@ export function InvolveForm() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const schema = useMemo(() => buildSchema(fields), [fields]);
-
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(schema) });
-
-  async function onSubmit(values: Record<string, unknown>) {
+  async function onSubmit(values: Values) {
     setStatus("sending");
     const body = new FormData();
     Object.entries(values).forEach(([k, v]) => {
-      if (v != null && k !== "photo") body.append(k, String(v));
+      if (v != null && v !== "") body.append(k, String(v));
     });
     body.append("path", path);
     if (photo) body.append("photo", photo);
@@ -150,22 +145,18 @@ export function InvolveForm() {
       {/* path switch + share */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex rounded-full border border-ink/10 bg-paper p-1">
-          {ways
-            .filter((w) => w.id !== "donate")
-            .map((w) => (
-              <button
-                key={w.id}
-                type="button"
-                onClick={() => choosePath(w.id)}
-                className={`type-caption rounded-full px-4 py-2 transition-colors ${
-                  activePath === w.id
-                    ? "bg-ink text-white"
-                    : "text-ink/55 hover:text-ink"
-                }`}
-              >
-                {w.label}
-              </button>
-            ))}
+          {PATHS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => choosePath(p)}
+              className={`type-caption rounded-full px-4 py-2 capitalize transition-colors ${
+                path === p ? "bg-ink text-white" : "text-ink/55 hover:text-ink"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
         </div>
 
         <button
@@ -177,71 +168,111 @@ export function InvolveForm() {
           {copied ? "Link copied" : "Share"}
         </button>
       </div>
-      {path === "volunteer" && (
+
+      {isVolunteer && (
         <div className="mt-7">
           <PhotoUpload photo={photo} onChange={setPhoto} />
         </div>
       )}
 
       <div className="mt-6 grid gap-x-5 gap-y-6 sm:grid-cols-2">
-        {fields.map((f) => (
-          <div key={f.name} className={f.half ? "" : "sm:col-span-2"}>
-            <Label htmlFor={f.name} className="text-sm font-medium text-ink/70">
-              {f.label}
-            </Label>
+        <Field label="Name" error={errors.name?.message}>
+          <Input
+            id="name"
+            placeholder="Your full name"
+            className="h-12 placeholder:text-ink/35"
+            {...register("name")}
+          />
+        </Field>
 
-            <div className="mt-2">
-              {f.type === "textarea" ? (
-                <Textarea
-                  id={f.name}
-                  rows={4}
-                  placeholder={f.placeholder}
-                  {...register(f.name)}
-                />
-              ) : f.type === "select" ? (
-                <Controller
-                  name={f.name}
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value ?? ""}
-                    >
-                      <SelectTrigger id={f.name} className="w-full h-16 py-6">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-75">
-                        {f.options?.map((o) => (
-                          <SelectItem key={o} value={o} className="py-2 px-2">
-                            {o}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              ) : (
-                <Input
-                  id={f.name}
-                  type={f.type}
-                  placeholder={f.placeholder}
-                  className="placeholder:text-ink/35 h-12"
-                  {...register(f.name)}
-                />
-              )}
-            </div>
+        <Field label="Email" error={errors.email?.message}>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            className="h-12 placeholder:text-ink/35"
+            {...register("email")}
+          />
+        </Field>
 
-            {errors[f.name] && (
-              <span className="type-caption mt-1.5 block text-destructive">
-                {String(errors[f.name]?.message)}
-              </span>
+        <Field label="Phone" error={errors.phone?.message}>
+          <Input
+            id="phone"
+            type="tel"
+            placeholder="055 000 0000"
+            className="h-12 placeholder:text-ink/35"
+            {...register("phone")}
+          />
+        </Field>
+
+        <Field label="Where you're based" error={errors.location?.message}>
+          <Input
+            id="location"
+            placeholder="Kumasi"
+            className="h-12 placeholder:text-ink/35"
+            {...register("location")}
+          />
+        </Field>
+
+        {!isVolunteer && (
+          <Field
+            className="sm:col-span-2"
+            label="Organisation"
+            error={errors.organisation?.message}
+          >
+            <Input
+              id="organisation"
+              placeholder="Your school, clinic or company"
+              className="h-12 placeholder:text-ink/35"
+              {...register("organisation")}
+            />
+          </Field>
+        )}
+
+        <Field
+          className="sm:col-span-2"
+          label={
+            isVolunteer
+              ? "Where you'd like to help"
+              : "How you'd like to partner"
+          }
+          error={
+            isVolunteer ? errors.role?.message : errors.partnerType?.message
+          }
+        >
+          <Controller
+            name={isVolunteer ? "role" : "partnerType"}
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                <SelectTrigger className="h-16 w-full py-6">
+                  <SelectValue placeholder="Select an option" />
+                </SelectTrigger>
+                <SelectContent className="max-h-75">
+                  {(isVolunteer ? roleOptions : partnerOptions).map((o) => (
+                    <SelectItem key={o} value={o} className="px-2 py-2">
+                      {o}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
-          </div>
-        ))}
+          />
+        </Field>
+
+        <Field className="sm:col-span-2" label="Anything else (optional)">
+          <Textarea
+            id="message"
+            rows={4}
+            placeholder="Your background, availability, questions…"
+            className="placeholder:text-ink/35"
+            {...register("message")}
+          />
+        </Field>
       </div>
 
       {status === "error" && (
-        <p className="type-caption mt-5 text-destructive">
+        <p className="mt-5 text-xs text-destructive">
           That didn&rsquo;t send. Try again, or message us on WhatsApp.
         </p>
       )}
@@ -254,5 +285,25 @@ export function InvolveForm() {
         {status === "sending" ? "Sending…" : "Send"}
       </Button>
     </form>
+  );
+}
+
+function Field({
+  label,
+  error,
+  className = "",
+  children,
+}: {
+  label: string;
+  error?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={className}>
+      <Label className="text-sm font-medium text-ink/70">{label}</Label>
+      <div className="mt-2.5">{children}</div>
+      {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
+    </div>
   );
 }
