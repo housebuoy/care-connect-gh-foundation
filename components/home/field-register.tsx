@@ -1,24 +1,37 @@
 "use client";
-import { impactTotals, recentOutreaches } from "@/lib/mock/outreaches";
+
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
+import type { Outreach } from "@/lib/mock/outreaches";
 
-export function FieldImpactTotals() {
+export type Totals = {
+  outreaches: number;
+  regions: number;
+  years: string;
+};
+
+export function FieldImpactTotals({ totals }: { totals: Totals }) {
   return (
     <div className="mt-8 grid grid-cols-1 divide-y divide-ink/10 border-y border-ink/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-      <StatCell value={impactTotals.outreaches} label="Outreaches" />
-      <StatCell value={impactTotals.regions} label="Regions" />
-      <StatCell value={(impactTotals.years)} label="Years" />
+      <StatCell value={totals.outreaches} label="Outreaches" />
+      <StatCell value={totals.regions} label="Regions" />
+      <StatCell value={totals.years} label="Years" />
     </div>
   );
 }
 
-export function FieldRegister() {
+export function FieldRegister({
+  rows = [],
+  totals,
+}: {
+  rows?: Outreach[];
+  totals: Totals;
+}) {
   const reduce = useReducedMotion();
+
   return (
     <section className="bg-paper py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5">
-        {/* section intro */}
         {/* header: link only shows on desktop, right-aligned */}
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -35,8 +48,6 @@ export function FieldRegister() {
           </Link>
         </div>
 
-        {/* ...register table... */}
-
         {/* mobile: full-width link under the table */}
         <Link
           href="/outreaches"
@@ -45,56 +56,58 @@ export function FieldRegister() {
           View all outreaches →
         </Link>
 
-        {/* impact totals — now sit UNDER the header with room */}
-        <FieldImpactTotals />
+        <FieldImpactTotals totals={totals} />
 
-        {/* column headers */}
-        <div className="mt-8 hidden grid-cols-[3rem_1fr_7rem_5rem] gap-4 border-b border-ink/10 py-2 md:grid">
-          <span className="type-caption text-ink/30">№</span>
-          <span className="type-caption text-ink/30">Outreaches</span>
-          <span className="type-caption text-ink/30">Region</span>
-          <span className="type-caption text-right text-ink/30">Reached</span>
-        </div>
+        {rows.length > 0 && (
+          <>
+            {/* column headers */}
+            <div className="mt-8 hidden grid-cols-[3rem_1fr_7rem_5rem] gap-4 border-b border-ink/10 py-2 md:grid">
+              <span className="type-caption text-ink/30">№</span>
+              <span className="type-caption text-ink/30">Outreach</span>
+              <span className="type-caption text-ink/30">Region</span>
+              <span className="type-caption text-right text-ink/30">Reached</span>
+            </div>
 
-        <motion.ul
-          initial="hidden"
-          animate="show"
-          variants={{
-            show: { transition: { staggerChildren: reduce ? 0 : 0.06 } },
-          }}
-          className="divide-y divide-ink/[0.07]"
-        >
-          {recentOutreaches.map((o) => (
-            <motion.li
-              key={o.number}
+            <motion.ul
+              initial="hidden"
+              animate="show"
               variants={{
-                hidden: { opacity: 0, x: reduce ? 0 : -6 },
-                show: { opacity: 1, x: 0 },
+                show: { transition: { staggerChildren: reduce ? 0 : 0.06 } },
               }}
+              className="divide-y divide-ink/[0.07]"
             >
-              <Link
-                href="/outreaches"
-                className="grid grid-cols-[3rem_1fr_5rem] items-center gap-4 py-3 transition-colors hover:bg-ink/3 md:grid-cols-[3rem_1fr_7rem_5rem]"
-              >
-                <span className="type-caption text-ink/40">№{o.number}</span>
-                <span className="type-caption truncate text-ink/90">
-                  {o.community}
-                </span>
-                <span className="type-caption hidden text-ink/50 md:block">
-                  {o.region}
-                </span>
-                <span className="type-caption text-right font-medium text-tally">
-                  {o.reached ? `${o.reached}+` : "—"}
-                </span>
-              </Link>
-            </motion.li>
-          ))}
-        </motion.ul>
+              {rows.map((o) => (
+                <motion.li
+                  key={o.number}
+                  variants={{
+                    hidden: { opacity: 0, x: reduce ? 0 : -6 },
+                    show: { opacity: 1, x: 0 },
+                  }}
+                >
+                  <Link
+                    href="/outreaches"
+                    className="grid grid-cols-[3rem_1fr_5rem] items-center gap-4 py-3 transition-colors hover:bg-ink/3 md:grid-cols-[3rem_1fr_7rem_5rem]"
+                  >
+                    <span className="type-caption text-ink/40">№{o.number}</span>
+                    <span className="type-caption truncate text-ink/90">
+                      {o.community}
+                    </span>
+                    <span className="type-caption hidden text-ink/50 md:block">
+                      {o.region}
+                    </span>
+                    <span className="type-caption text-right font-medium text-tally">
+                      {o.reached ? `${o.reached}+` : "—"}
+                    </span>
+                  </Link>
+                </motion.li>
+              ))}
+            </motion.ul>
+          </>
+        )}
       </div>
     </section>
   );
 }
-
 
 function StatCell({ value, label }: { value: number | string; label: string }) {
   return (

@@ -1,9 +1,11 @@
 import { NavTheme } from "@/components/nav-theme";
 import { GetInvolved } from "@/components/home/get-involved";
 import UpcomingOutreaches from "@/components/outreaches/upcoming";
-import { outreachesByYear, impactTotals } from "@/lib/mock/outreaches";
+import { FieldImpactTotals } from "@/components/home/field-register";
+import { getOutreaches } from "@/sanity/queries";
+import { outreaches as fallback } from "@/lib/mock/outreaches";
 import type { Outreach } from "@/lib/mock/outreaches";
-import {FieldImpactTotals} from  '@/components/home/field-register';
+import { byYear, impactTotals, upcoming } from "@/lib/outreach-utils";
 
 export const metadata = {
   title: "Outreaches · Care Connect GH Foundation",
@@ -11,8 +13,18 @@ export const metadata = {
     "A running record of the communities Care Connect GH has reached with health education, screening and support across Ghana.",
 };
 
-export default function OutreachesPage() {
-  const grouped = outreachesByYear();
+export default async function OutreachesPage() {
+  let fetched: Outreach[] = [];
+  try {
+    fetched = await getOutreaches();
+  } catch (err) {
+    console.error("Sanity fetch failed, using fallback:", err);
+  }
+
+  const all = fetched.length ? fetched : fallback;
+  const grouped = byYear(all);
+  const totals = impactTotals(all);
+  const next = upcoming(all);
 
   return (
     <>
@@ -30,12 +42,12 @@ export default function OutreachesPage() {
             reached with health education, screening and support since 2024.
           </p>
 
-          <FieldImpactTotals />
+          <FieldImpactTotals totals={totals} />
         </div>
       </section>
 
-      {/* upcoming — renders nothing when none, card when one, carousel when many */}
-      <UpcomingOutreaches />
+      {/* upcoming — nothing when none, card when one, carousel when many */}
+      <UpcomingOutreaches items={next} />
 
       {/* the register */}
       <section className="bg-paper pb-24 pt-14 md:pb-28">
@@ -108,16 +120,5 @@ function OutreachRow({ o }: { o: Outreach }) {
         )}
       </div>
     </li>
-  );
-}
-
-function Stat({ value, label }: { value: number | string; label: string }) {
-  return (
-    <div className="px-4 first:pl-0">
-      <p className="font-display text-2xl font-semibold text-navy">
-        {typeof value === "number" ? value.toLocaleString("en-GB") : value}
-      </p>
-      <p className="type-caption mt-1 text-ink/50">{label}</p>
-    </div>
   );
 }

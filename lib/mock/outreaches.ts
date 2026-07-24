@@ -1,5 +1,6 @@
 export type Outreach = {
   number: number;
+  alt?: string;
   year: number;
   community: string;
   location: string;

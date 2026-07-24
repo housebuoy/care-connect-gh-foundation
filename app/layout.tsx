@@ -3,6 +3,7 @@ import { Archivo, Source_Serif_4, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteFooter } from "@/components/site-footer";
 import { NavThemeProvider } from "@/components/nav-theme";
+import { getSiteSettings } from "@/sanity/queries";
 
 const archivo = Archivo({
   subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo",
@@ -15,14 +16,16 @@ const martianMono = Martian_Mono({
 });
 
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSiteSettings().catch(() => null);
+
   return (
     <html lang="en" suppressHydrationWarning className={`${archivo.variable} ${sourceSerif.variable} ${martianMono.variable} scroll-smooth`} >
       <body>
         <NavThemeProvider>
         <SiteNav />
         {children}
-        <SiteFooter />
+        <SiteFooter settings={settings} />
         </NavThemeProvider>
       </body>
     </html>

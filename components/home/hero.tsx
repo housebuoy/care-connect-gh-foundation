@@ -4,54 +4,60 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { heroOutreaches } from "@/lib/mock/outreaches";
+import type { Outreach } from "@/lib/mock/outreaches";
 
 const ROTATE_MS = 8000;
 
-export function Hero() {
+export function Hero({ outreaches }: { outreaches: Outreach[] }) {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    if (reduce || heroOutreaches.length <= 1) return;
+    if (reduce || outreaches.length <= 1) return;
     const id = setInterval(
-      () => setActive((i) => (i + 1) % heroOutreaches.length),
+      () => setActive((i) => (i + 1) % outreaches.length),
       ROTATE_MS,
     );
     return () => clearInterval(id);
-  }, [reduce]);
+  }, [reduce, outreaches.length]);
 
-  const current = heroOutreaches[active];
+  const current = outreaches[active];
 
   return (
     <section className="relative flex min-h-svh flex-col overflow-hidden bg-paper text-ink">
       {/* ── PHOTO ── */}
       <div className="relative h-[52vh] w-full md:absolute md:inset-y-0 md:right-0 md:h-full md:w-[54%]">
-        {heroOutreaches.map((o, i) => (
-          <motion.div
-            key={o.number}
-            className="absolute inset-0"
-            initial={false}
-            animate={{ opacity: i === active ? 1 : 0 }}
-            transition={{ duration: reduce ? 0 : 1.2 }}
-          >
-            <HeroPhoto
-              src={o.image}
-              alt={`Health outreach at ${o.community}`}
-              priority={i === 0}
-            />
-          </motion.div>
-        ))}
+        {outreaches.length > 0 ? (
+          outreaches.map((o, i) => (
+            <motion.div
+              key={o.number}
+              className="absolute inset-0"
+              initial={false}
+              animate={{ opacity: i === active ? 1 : 0 }}
+              transition={{ duration: reduce ? 0 : 1.2 }}
+            >
+              <HeroPhoto
+                src={o.image}
+                alt={o.alt ?? `Health outreach at ${o.community}`}
+                priority={i === 0}
+              />
+            </motion.div>
+          ))
+        ) : (
+          <HeroPhoto alt="" />
+        )}
 
         {/* mobile bottom fade so the section reads as one */}
         <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-paper via-transparent to-transparent md:hidden" />
 
-        {/* labelled evidence */}
-        <div className="absolute bottom-5 right-5 rounded-lg border border-ink/10 bg-paper/85 px-4 py-2.5 backdrop-blur">
-          <p className="type-caption text-navy">
-            №{current.number} · {current.region}
-          </p>
-        </div>
+        {/* labelled evidence — only when there's an outreach to label */}
+        {current && (
+          <div className="absolute bottom-5 right-5 rounded-lg border border-ink/10 bg-paper/85 px-4 py-2.5 backdrop-blur">
+            <p className="type-caption text-navy">
+              №{current.number} · {current.region}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* ── CONTENT ── fills the viewport, bottom-weighted */}

@@ -7,6 +7,10 @@ const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(req: Request) {
   const form = await req.formData();
+  const settings = await writeClient.fetch<{ email: string } | null>(
+  `*[_type == "siteSettings"][0]{ email }`
+);
+const to = settings?.email ?? "Careconnectghfoundation@gmail.com";
 
   const data: Record<string, string> = {};
   for (const [k, v] of form.entries()) {
@@ -50,7 +54,7 @@ export async function POST(req: Request) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
         from: "Care Connect Website <onboarding@resend.dev>",
-        to: "Careconnectghfoundation@gmail.com",
+        to: to,
         replyTo: data.email,
         subject: `${data.path === "partner" ? "Partnership" : "Volunteer"}: ${data.name}`,
         text: Object.entries(data).map(([k, v]) => `${k}: ${v}`).join("\n"),
