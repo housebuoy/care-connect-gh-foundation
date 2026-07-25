@@ -27,6 +27,20 @@ export const partner = defineType({
       ],
     }),
     defineField({
+      name: "category",
+      type: "string",
+      options: {
+        list: [
+          { title: "Medical & Diagnostic", value: "medical" },
+          { title: "Implementation & Scientific", value: "implementation" },
+          { title: "Media", value: "media" },
+          { title: "Corporate Sponsor", value: "corporate" },
+        ],
+        layout: "radio",
+      },
+      validation: (r) => r.required(),
+    }),
+    defineField({
       name: "url",
       title: "Website",
       type: "url",
@@ -36,14 +50,19 @@ export const partner = defineType({
       name: "order",
       title: "Display order",
       type: "number",
-      description: "Lower numbers appear first. Leave blank to sort alphabetically.",
+      description:
+        "Lower numbers appear first. Leave blank to sort alphabetically.",
     }),
   ],
   preview: {
     select: { title: "name", media: "logo", subtitle: "url" },
   },
   orderings: [
-    { title: "Display order", name: "order", by: [{ field: "order", direction: "asc" }] },
+    {
+      title: "Display order",
+      name: "order",
+      by: [{ field: "order", direction: "asc" }],
+    },
     { title: "Name", name: "name", by: [{ field: "name", direction: "asc" }] },
   ],
 });

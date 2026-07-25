@@ -51,7 +51,7 @@ export function GetInvolved() {
             </Link>
 
             <Link
-              href="/get-involved"
+              href="/get-involved?as=volunteer#form"
               className="group flex items-center justify-between rounded-xl border border-ink/15 px-5 py-4 text-ink transition-colors hover:bg-ink/[0.03]"
             >
               <span>

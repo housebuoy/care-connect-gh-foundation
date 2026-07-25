@@ -3,6 +3,7 @@ import { client } from "@/sanity/client";
 import type { Outreach } from "@/lib/mock/outreaches";
 import type { Partner } from "@/lib/mock/partners";
 import { TeamMember } from "@/lib/mock/about";
+import type { HealthTopic, Article } from "@/lib/mock/articles";    
 
 const fields = groq`
   number, community, location, region, year, summary,
@@ -59,6 +60,7 @@ export async function getPartners(): Promise<Partner[]> {
   return client.fetch(
     groq`*[_type == "partner"] | order(order asc, name asc){
       name,
+      category,
       "logo": logo.asset->url,
       "alt": logo.alt,
       url
@@ -76,5 +78,25 @@ export async function getPeople(): Promise<TeamMember[]> {
     }`,
     {},
     { next: { tags: ["person"] } }
+  );
+}
+
+
+export async function getHealthTopics(): Promise<HealthTopic[]> {
+  return client.fetch(
+    groq`*[_type == "healthTopic"] | order(order asc, condition asc){
+      title, "slug": slug.current, condition, excerpt,
+      "image": image.asset->url, "alt": image.alt,
+      "reviewedBy": reviewedBy->{name, credential}, reviewedAt
+    }`, {}, { next: { tags: ["healthTopic"] } }
+  );
+}
+
+export async function getArticles(): Promise<Article[]> {
+  return client.fetch(
+    groq`*[_type == "article"] | order(date desc){
+      title, "slug": slug.current, date, excerpt,
+      "image": image.asset->url, "alt": image.alt
+    }`, {}, { next: { tags: ["article"] } }
   );
 }

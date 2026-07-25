@@ -8,6 +8,17 @@ export type Article = {
   image?: string;
 };
 
+export type HealthTopic = {
+  title: string;
+  slug: string;
+  condition: string;
+  excerpt: string;
+  image?: string;
+  alt?: string;
+  reviewedBy?: { name: string; credential?: string };
+  reviewedAt?: string;
+};
+
 // TEMP PREVIEW DATA — for client demo only. Replace entirely before launch.
 // Reviewer names are placeholders; do NOT present these as real published articles.
 export const articles: Article[] = [

@@ -1,6 +1,7 @@
 export type Partner = {
   name: string;
-  logo?: string;   // /partners/xxx.svg — transparent PNG/SVG
+  category?: "medical" | "implementation" | "media" | "corporate";
+  logo?: string;   
   url?: string;
 };
 

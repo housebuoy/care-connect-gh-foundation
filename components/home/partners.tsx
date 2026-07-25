@@ -1,59 +1,79 @@
-"use client";
-
 import Image from "next/image";
 import type { Partner } from "@/lib/mock/partners";
 
+const GROUPS = [
+  { key: "medical", label: "Medical & diagnostic" },
+  { key: "implementation", label: "Implementation & scientific" },
+  { key: "media", label: "Media" },
+  { key: "corporate", label: "Corporate sponsors" },
+] as const;
+
 export function Partners({ partners = [] }: { partners?: Partner[] }) {
-  // Don't render an empty/thin credibility section — hide until real partners exist.
   if (partners.length === 0) return null;
 
-  // duplicate the list so the marquee can loop seamlessly
-  const loop = [...partners, ...partners];
-
-  // only animate if there are enough to scroll; otherwise center them statically
-  const animate = partners.length >= 5;
+  const grouped = GROUPS.map((g) => ({
+    ...g,
+    items: partners.filter((p) => p.category === g.key),
+  })).filter((g) => g.items.length > 0);
 
   return (
-    <section className="border-y border-ink/10 bg-paper py-14 md:py-16">
+    <section className="bg-paper py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5">
-        <p className="type-caption text-center text-tally">Our Partners</p>
-      </div>
-
-      {animate ? (
-        <div className="group relative mt-8 overflow-hidden mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-          <ul className="flex w-max animate-marquee items-center gap-12 group-hover:[animation-play-state:paused] md:gap-20">
-            {loop.map((p, i) => (
-              <li key={`${p.name}-${i}`} className="shrink-0">
-                <PartnerMark partner={p} />
-              </li>
-            ))}
-          </ul>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="type-caption text-tally">Our partners</p>
+            <h2 className="type-h2 mt-3 text-ink">
+              The work is never done alone.
+            </h2>
+          </div>
+          <span className="type-caption text-ink/40">
+            {partners.length} organisations
+          </span>
         </div>
-      ) : (
-        <div className="mx-auto mt-8 flex max-w-6xl flex-wrap items-center justify-center gap-10 px-5 md:gap-16">
-          {partners.map((p) => (
-            <PartnerMark key={p.name} partner={p} />
+
+        <div className="mt-12 divide-y divide-ink/10 border-t border-ink/10">
+          {grouped.map((g, i) => (
+            <div
+              key={g.key}
+              className="grid gap-4 py-8 md:grid-cols-[1fr_2fr] md:gap-12"
+            >
+              <div className="flex items-baseline gap-3 md:min-w-0">
+                <span className="type-caption text-tally">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="font-display text-lg font-semibold text-ink md:text-xl">
+                  {g.label}
+                </h3>
+              </div>
+
+              <ul className="flex flex-wrap items-center gap-x-3 gap-y-5 md:min-w-0">
+                {g.items.map((p) => (
+                  <li key={p.name}>
+                    <PartnerMark partner={p} />
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
-      )}
+      </div>
     </section>
   );
 }
 
 function PartnerMark({ partner }: { partner: Partner }) {
   const content = partner.logo ? (
-    <div className="relative h-10 w-32 opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 md:h-12 md:w-40">
+    <div className="relative h-9 w-28 opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0 md:h-10 md:w-32">
       <Image
         src={partner.logo}
         alt={partner.name}
         fill
-        className="object-contain"
-        sizes="160px"
+        className="object-contain object-left"
+        sizes="128px"
       />
     </div>
   ) : (
-    // graceful fallback when there's a name but no logo yet
-    <span className="type-label whitespace-nowrap text-ink/40 transition hover:text-navy">
+    <span className="type-body text-ink/70 transition-colors hover:text-navy">
       {partner.name}
     </span>
   );
