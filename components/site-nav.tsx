@@ -45,7 +45,7 @@ export function SiteNav() {
             alt="Care Connect GH Foundation"
             width={130}
             height={130}
-            className="h-auto w-auto"
+            // className="h-auto w-auto"
             priority
           />
         </Link>
