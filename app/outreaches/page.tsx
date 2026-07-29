@@ -6,6 +6,7 @@ import { getOutreaches } from "@/sanity/queries";
 import { outreaches as fallback } from "@/lib/mock/outreaches";
 import type { Outreach } from "@/lib/mock/outreaches";
 import { byYear, impactTotals, upcoming } from "@/lib/outreach-utils";
+import Link from "next/link";
 
 export const metadata = {
   title: "Outreaches · Care Connect GH Foundation",
@@ -86,39 +87,52 @@ export default async function OutreachesPage() {
 }
 
 function OutreachRow({ o }: { o: Outreach }) {
-  return (
-    <li className="grid grid-cols-[3.5rem_1fr] gap-x-6 gap-y-2 py-6 md:grid-cols-[3.5rem_1fr_10rem_5rem] md:items-baseline md:py-7">
+  const inner = (
+    <>
       <span className="type-caption text-ink/35 md:pt-1">
         №{String(o.number).padStart(2, "0")}
       </span>
-
       <div>
-        <h3 className="font-display text-xl font-semibold text-ink">
+        <h3 className="font-display text-xl font-semibold text-ink group-hover:text-navy">
           {o.community}
         </h3>
         <p className="type-caption mt-1 text-navy md:hidden">
           {o.location} · {o.region} Region
         </p>
         <p className="type-body mt-3 max-w-2xl text-ink/70">{o.summary}</p>
+        {o.hasGallery && (
+          <span className="type-caption mt-3 inline-block text-navy/60 group-hover:text-navy">
+            View photos →
+          </span>
+        )}
       </div>
-
       <div className="hidden md:block md:pt-1">
         <p className="type-caption text-navy">{o.location}</p>
         <p className="type-caption mt-0.5 text-ink/40">{o.region} Region</p>
       </div>
-
       <div className="hidden md:block md:pt-1 md:text-right">
         {o.reached ? (
           <>
-            <span className="font-display text-2xl font-semibold text-tally">
-              {o.reached}+
-            </span>
+            <span className="font-display text-2xl font-semibold text-tally">{o.reached}+</span>
             <span className="type-caption mt-0.5 block text-ink/45">reached</span>
           </>
         ) : (
           <span className="type-caption text-ink/25">—</span>
         )}
       </div>
+    </>
+  );
+
+  const cls =
+    "grid grid-cols-[3.5rem_1fr] gap-x-6 gap-y-2 py-6 md:grid-cols-[3.5rem_1fr_10rem_5rem] md:items-baseline md:py-7";
+console.log(o.number, { slug: o.slug, hasGallery: o.hasGallery });
+  return o.hasGallery && o.slug ? (
+    <li>
+      <Link href={`/outreaches/${o.slug}`} className={`group ${cls} transition-colors hover:bg-ink/[0.02]`}>
+        {inner}
+      </Link>
     </li>
+  ) : (
+    <li className={cls}>{inner}</li>
   );
 }

@@ -53,6 +53,19 @@ export const partner = defineType({
       description:
         "Lower numbers appear first. Leave blank to sort alphabetically.",
     }),
+    defineField({
+      name: "gallery",
+      title: "Photos",
+      type: "array",
+      of: [
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [defineField({ name: "alt", type: "string" })],
+        },
+      ],
+      options: { layout: "grid" },
+    }),                                                                                         
   ],
   preview: {
     select: { title: "name", media: "logo", subtitle: "url" },
