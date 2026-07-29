@@ -51,7 +51,14 @@ export default async function OutreachDetail({
             <div className="mt-12 grid gap-4 sm:grid-cols-2">
               {o.gallery.map((img, i) => (
                 <div key={i} className="relative aspect-4/3 overflow-hidden rounded-xl border border-ink/10">
-                  <Image src={img.url} alt={img.alt ?? `${o.community} outreach`} fill placeholder="blur" blurDataURL={img.lqip} />
+                  <Image src={img.url} 
+                    alt={img.alt ?? `${o.community} outreach`} 
+                    fill placeholder="blur" 
+                    quality={80}
+                    blurDataURL={img.lqip} 
+                    className="object-cover"
+                    sizes="(max-width:768px) 100vw, 50vw"
+                    />
                 </div>
               ))}
             </div>
