@@ -1,4 +1,5 @@
 import { Archivo, Source_Serif_4, Martian_Mono } from "next/font/google";
+import "./globals.css";
 
 const archivo = Archivo({
   subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo",

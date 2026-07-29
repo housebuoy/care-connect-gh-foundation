@@ -124,7 +124,7 @@ export default function GetInvolvedPage() {
           <div>
             <h2 className="type-h2 text-ink">Tell us about yourself.</h2>
             <p className="type-lead mt-3 text-ink/60">
-              Volunteering or partnering — pick one and we&rsquo;ll take it from
+              Volunteering or partnering? Pick one and we&rsquo;ll take it from
               there.
             </p>
             <div className="mt-8" id="form">
