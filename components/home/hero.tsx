@@ -54,7 +54,7 @@ export function Hero({ outreaches }: { outreaches: Outreach[] }) {
         {current && (
           <div className="absolute bottom-5 right-5 rounded-lg border border-ink/10 bg-paper/85 px-4 py-2.5 backdrop-blur">
             <p className="type-caption text-navy">
-              №{current.number} · {current.region}
+               {current.region}
             </p>
           </div>
         )}

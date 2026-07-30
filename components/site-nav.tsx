@@ -29,78 +29,78 @@ export function SiteNav() {
   }, [open]);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled
-          ? "bg-paper/95 backdrop-blur border-b border-ink/10"
-          : "bg-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        {/* logo = home */}
-        {/* logo — swaps by treatment */}
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src={light ? "/logo/reversed.svg" : "/logo/primary.svg"}
-            alt="Care Connect GH Foundation"
-            width={130}
-            height={130}
-            // className="h-auto w-auto"
-            priority
-          />
-        </Link>
-
-        {/* desktop links */}
-        <div className="hidden items-center gap-8 md:flex">
-          {navItems.map((item) => {
-            const active = pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`type-caption transition-colors ${
-                  light
-                    ? "text-white/80 hover:text-white"
-                    : "text-ink/80 hover:text-navy"
-                } ${active ? "border-b-2 border-sky pb-0.5" : ""}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-          <Link
-            href={donate.href}
-            className="type-label rounded-full bg-tally px-5 py-2 text-ink transition-transform hover:scale-105"
-          >
-            {donate.label}
+<>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+          scrolled
+            ? "bg-paper/95 backdrop-blur border-b border-ink/10"
+            : "bg-transparent"
+        }`}
+      >
+        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+          {/* logo = home */}
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src={light ? "/logo/reversed.svg" : "/logo/primary.svg"}
+              alt="Care Connect GH Foundation"
+              width={130}
+              height={130}
+              priority
+            />
           </Link>
-        </div>
 
-        {/* mobile: donate stays visible + hamburger */}
-        <div className="flex items-center gap-3 md:hidden">
-          <Link
-            href={donate.href}
-            className="rounded-full bg-tally px-4 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-widest text-ink"
-          >
-            {donate.label}
-          </Link>
-          <button
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
-            className={light ? "text-white" : "text-navy"}
-          >
-            <Menu size={24} />
-          </button>
-        </div>
-      </nav>
+          {/* desktop links */}
+          <div className="hidden items-center gap-8 md:flex">
+            {navItems.map((item) => {
+              const active = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`type-caption transition-colors ${
+                    light
+                      ? "text-white/80 hover:text-white"
+                      : "text-ink/80 hover:text-navy"
+                  } ${active ? "border-b-2 border-sky pb-0.5" : ""}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+            <Link
+              href={donate.href}
+              className="type-label rounded-full bg-tally px-5 py-2 text-ink transition-transform hover:scale-105"
+            >
+              {donate.label}
+            </Link>
+          </div>
 
-      {/* mobile sheet */}
+          {/* mobile: donate stays visible + hamburger */}
+          <div className="flex items-center gap-3 z-50 md:hidden">
+            <Link
+              href={donate.href}
+              className="rounded-full bg-tally px-4 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-widest text-ink"
+            >
+              {donate.label}
+            </Link>
+            <button
+              onClick={() => setOpen(true)}
+              aria-label="Open menu"
+              className={light ? "text-white" : "text-navy"}
+            >
+              <Menu size={24} />
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* mobile sheet (MOVED OUTSIDE THE HEADER) */}
       {open && (
-        <div className="fixed inset-0 z-50 bg-ink md:hidden">
-          <div className="flex h-16 items-center justify-between px-5 mt-5">
+        <div className="fixed inset-0 z-60 bg-ink md:hidden">
+          <div className="mt-5 flex h-16 items-center justify-between px-5">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/logo/reversed.svg" 
+                src="/logo/reversed.svg"
                 alt="Care Connect GH Foundation"
                 width={130}
                 height={130}
@@ -129,6 +129,6 @@ export function SiteNav() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

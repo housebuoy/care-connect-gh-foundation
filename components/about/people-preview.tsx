@@ -20,7 +20,7 @@ export function PeoplePreview({
             </p>
           </div>
           <Link
-            href="/team"
+            href="/about/team"
             className="type-caption text-navy/70 underline-offset-4 hover:text-navy hover:underline"
           >
             See all {total} →

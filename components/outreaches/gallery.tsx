@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-type GalleryImage = { url: string; alt?: string };
+// 1. Added lqip to the type definition
+type GalleryImage = { url: string; alt?: string; lqip?: string };
 
 export function Gallery({ images, community }: { images: GalleryImage[]; community: string }) {
   const [open, setOpen] = useState<number | null>(null);
@@ -43,14 +44,17 @@ export function Gallery({ images, community }: { images: GalleryImage[]; communi
           <button
             key={i}
             onClick={() => setOpen(i)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-ink/[0.03]"
+            className="group relative aspect-4/3 overflow-hidden rounded-xl bg-ink/3"
             aria-label={`View photo ${i + 1}`}
           >
             <Image
               src={img.url}
               alt={img.alt ?? `${community} outreach`}
               fill
-              quality={80}
+              unoptimized // <-- Bypass Next.js double optimization
+              placeholder={img.lqip ? "blur" : "empty"} // <-- Trigger blur
+              blurDataURL={img.lqip} // <-- Pass Sanity's base64 string
+              priority={i === 0} // <-- Prioritize the first image
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width:768px) 100vw, 50vw"
             />
@@ -61,7 +65,7 @@ export function Gallery({ images, community }: { images: GalleryImage[]; communi
       {/* lightbox */}
       {open !== null && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/95 backdrop-blur"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-ink/95 backdrop-blur"
           onClick={close}
         >
           {/* close */}
@@ -94,7 +98,9 @@ export function Gallery({ images, community }: { images: GalleryImage[]; communi
               src={images[open].url}
               alt={images[open].alt ?? `${community} outreach`}
               fill
-              quality={90}
+              unoptimized // <-- Bypass Next.js double optimization
+              placeholder={images[open].lqip ? "blur" : "empty"} // <-- Trigger blur
+              blurDataURL={images[open].lqip} // <-- Pass Sanity's base64 string
               className="object-contain"
               sizes="85vw"
               priority

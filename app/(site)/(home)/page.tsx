@@ -17,6 +17,7 @@ export default async function Home() {
   const fetched = await getOutreaches();
   const all = fetched.length ? fetched : fallback; // safe: the 13 are real
   const done = completed(all);
+  const heroOutreaches = done.filter((o) => o.image).slice(0, 3);
 
   const content = await getAboutContent().catch(() => null);
   const about = content ?? fallbackAbout;
@@ -24,7 +25,7 @@ export default async function Home() {
   return (
     <>
       <SiteNav />
-      <Hero outreaches={done.slice(0, 3)} />
+      <Hero outreaches={heroOutreaches} />
       <WhatWeDo />
       <Mission mission={about.mission} vision={about.vision} />
       <FieldRegister rows={done.slice(0, 5)} totals={impactTotals(all)} />
