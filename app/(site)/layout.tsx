@@ -16,6 +16,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {children}
         <SiteFooter settings={settings} />
         </NavThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
