@@ -1,31 +1,6 @@
 import { useClient } from "sanity";
 import type { DocumentActionComponent } from "sanity";
 
-const person: {
-  _type: "person";
-  name: string;
-  role: string;
-  isVolunteer: boolean;
-  isLeadership: boolean;
-  showOnSite: boolean;
-  photo?: { _type: "image"; asset: { _type: "reference"; _ref: string } };
-} = {
-  _type: "person",
-  name: doc?.name ?? "Volunteer",
-  role: doc?.displayRole || doc?.role || "Volunteer",
-  isVolunteer: true,
-  isLeadership: false,
-  showOnSite: true,
-};
-
-const photo = doc?.photo as { asset?: { _ref?: string } } | undefined;
-if (photo?.asset?._ref) {
-  person.photo = {
-    _type: "image",
-    asset: { _type: "reference", _ref: photo.asset._ref },
-  };
-}
-
 export const approveVolunteer: DocumentActionComponent = (props) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const client = useClient({ apiVersion: "2024-01-01" });
@@ -38,31 +13,43 @@ export const approveVolunteer: DocumentActionComponent = (props) => {
   }
 
   return {
-    label: doc?.status === "approved" ? "Re-add to team" : "Approve & add to team",
+    label:
+      doc?.status === "approved" ? "Re-add to team" : "Approve & add to team",
     tone: "positive",
     onHandle: async () => {
       try {
-        // build the person doc, only including photo if it's a valid image ref
-        const person: Record<string, unknown> = {
+        // 1. Explicitly cast Sanity document fields to string
+        const name = (doc?.name as string) || "Volunteer";
+        const role = (doc?.displayRole as string) || (doc?.role as string) || "Volunteer";
+
+        // 2. Define strict inline types so client.create() recognizes the _type field
+        const personPayload: {
+          _type: "person";
+          name: string;
+          role: string;
+          isVolunteer: boolean;
+          isLeadership: boolean;
+          showOnSite: boolean;
+          photo?: { _type: "image"; asset: { _type: "reference"; _ref: string } };
+        } = {
           _type: "person",
-          name: doc?.name ?? "Volunteer",
-          role: doc?.displayRole || doc?.role || "Volunteer",
+          name: name,
+          role: role,
           isVolunteer: true,
           isLeadership: false,
           showOnSite: true,
         };
 
-        const photo = doc?.photo as
-          | { asset?: { _ref?: string } }
-          | undefined;
+        const photo = doc?.photo as { asset?: { _ref?: string } } | undefined;
         if (photo?.asset?._ref) {
-          person.photo = {
+          personPayload.photo = {
             _type: "image",
             asset: { _type: "reference", _ref: photo.asset._ref },
           };
         }
 
-        const created = await client.create(person);
+        // 3. Create the document (TypeScript will no longer complain about missing _type)
+        const created = await client.create(personPayload);
         console.log("✅ Created person:", created._id);
 
         const publishedId = props.id.replace(/^drafts\./, "");
@@ -75,7 +62,9 @@ export const approveVolunteer: DocumentActionComponent = (props) => {
         props.onComplete();
       } catch (err) {
         console.error("❌ Approve failed:", err);
-        alert(`Failed: ${err instanceof Error ? err.message : "unknown error"}`);
+        alert(
+          `Failed: ${err instanceof Error ? err.message : "unknown error"}`,
+        );
       }
     },
   };

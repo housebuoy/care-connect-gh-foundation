@@ -3,6 +3,7 @@ import "../globals.css";
 import { SiteFooter } from "@/components/site-footer";
 import { NavThemeProvider } from "@/components/nav-theme";
 import { getSiteSettings } from "@/sanity/queries";
+import { Analytics } from "@vercel/analytics/next"
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings().catch(() => null);
