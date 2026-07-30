@@ -20,7 +20,7 @@ export function PeopleGrid({ people, title, subtitle }: {
         <ul className="mt-12 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 md:gap-x-6">
           {people.map((p, i) => (
             <li key={i} className="flex flex-col items-center text-center">
-              <div className="relative aspect-square w-full overflow-hidden rounded-full border border-ink/10 bg-ink/[0.03]">
+              <div className="relative aspect-square w-full overflow-hidden rounded-full border border-ink/10 bg-ink/3">
                 {p.image ? (
                   <Image src={p.image} alt={p.name} fill className="object-cover"
                     sizes="(max-width:768px) 30vw, 15vw" />
