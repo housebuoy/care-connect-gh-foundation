@@ -41,7 +41,7 @@ export const roles: Role[] = [
     id: "documentation",
     title: "Documentation",
     body: "Photography and record-keeping — capturing each outreach so the work can be shown to partners and funders.",
-    image: "/images/get-involved/roles/documentation.jpg",
+    image: "/images/get-involved/_MG_0778.jpg",
   },
 ];
 
@@ -55,7 +55,7 @@ export const ways: Way[] = [
     eyebrow: "Give your time",
     title: "Join a team in the field.",
     body: "Outreaches run on people — taking readings, leading sessions, running the registration desk, keeping the record.",
-    image: "/images/get-involved/volunteer.jpg",
+    image: "/images/get-involved/GSA-62.jpg",
   },
   {
     id: "partner",
@@ -65,7 +65,7 @@ export const ways: Way[] = [
     eyebrow: "Bring your organisation",
     title: "Make the bigger days possible.",
     body: "Our largest screening reached hundreds of people because a diagnostic centre came on board. Schools, churches, clinics and companies all have a way in.",
-    image: "/images/get-involved/partner.jpg",
+    image: "/images/get-involved/IMG_3625.jpg",
   },
   {
     id: "donate",
@@ -75,7 +75,7 @@ export const ways: Way[] = [
     eyebrow: "Fund the work",
     title: "Cover what an outreach costs.",
     body: "Test strips, transport, printed materials and supplies. Funding is what turns a planned outreach into one that happens.",
-    image: "/images/get-involved/donate.jpg",
+    image: "/images/get-involved/IMG_6971.jpg",
   },
 ];
 

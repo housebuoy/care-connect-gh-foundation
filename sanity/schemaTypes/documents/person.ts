@@ -21,6 +21,21 @@ export const person = defineType({
       description: "Shown as a large card on About. Keep this to the core team.",
     }),
     defineField({
+      name: "isVolunteer",
+      title: "From volunteer signup",
+      type: "boolean",
+      initialValue: false,
+      readOnly: true,
+      description: "Set automatically when approved from a signup.",
+    }),
+    defineField({
+      name: "showOnSite",
+      title: "Show on site",
+      type: "boolean",
+      initialValue: true,
+      description: "Untick to hide this person from the public team page.",
+    }),
+    defineField({
       name: "photo",
       type: "image",
       options: { hotspot: true },

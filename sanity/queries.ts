@@ -72,12 +72,12 @@ export async function getPartners(): Promise<Partner[]> {
 
 export async function getPeople(): Promise<TeamMember[]> {
   return client.fetch(
-    groq`*[_type == "person"] | order(order asc, name asc){
+    groq`*[_type == "person" && showOnSite == true] | order(order asc, name asc){
       name, role, credential, isLeadership,
       "image": photo.asset->url, "alt": photo.alt
     }`,
     {},
-    { next: { tags: ["person"] } },
+    { next: { tags: ["person"] } }
   );
 }
 
@@ -118,5 +118,22 @@ export async function getOutreach(slug: string): Promise<OutreachDetail | null> 
 export async function getOutreachSlugs(): Promise<string[]> {
   return client.fetch(
     groq`*[_type == "outreach" && defined(slug.current)].slug.current`
+  );
+}
+
+export async function getApprovedVolunteers(): Promise<TeamMember[]> {
+  return client.fetch(
+    groq`*[_type == "submission"
+      && path == "volunteer"
+      && status == "approved"
+      && showOnSite == true]
+      | order(submittedAt asc){
+        "name": name,
+        "role": coalesce(displayRole, role),
+        "image": photo.asset->url,
+        "isLeadership": false
+      }`,
+    {},
+    { next: { tags: ["submission"] } }
   );
 }

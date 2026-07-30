@@ -68,12 +68,12 @@ export default function GetInvolvedPage() {
                 </h2>
                 <p className="type-body mt-2 text-ink/65">{w.body}</p>
 
-<Link
-  href={w.href}
-  className="type-caption mt-4 inline-flex items-center gap-1.5 text-navy underline-offset-4 hover:underline"
->
-  {w.cta} <span aria-hidden>→</span>
-</Link>
+                <Link
+                  href={w.href}
+                  className="type-caption mt-4 inline-flex items-center gap-1.5 text-navy underline-offset-4 hover:underline"
+                >
+                  {w.cta} <span aria-hidden>→</span>
+                </Link>
               </div>
             ))}
           </div>
