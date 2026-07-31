@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { motion, useReducedMotion } from "motion/react";
+import { Reveal } from "@/components/reveal";
 import type { Outreach } from "@/lib/mock/outreaches";
 
 export type Totals = {
@@ -27,13 +25,11 @@ export function FieldRegister({
   rows?: Outreach[];
   totals: Totals;
 }) {
-  const reduce = useReducedMotion();
-
   return (
     <section className="bg-paper py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5">
         {/* header: link only shows on desktop, right-aligned */}
-        <div className="flex flex-wrap items-end justify-between gap-6">
+        <Reveal className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="type-caption text-tally">The field record</p>
             <h2 className="type-h2 mt-3 text-ink">
@@ -46,7 +42,7 @@ export function FieldRegister({
           >
             View all →
           </Link>
-        </div>
+        </Reveal>
 
         {/* mobile: full-width link under the table */}
         <Link
@@ -68,40 +64,29 @@ export function FieldRegister({
               <span className="type-caption text-right text-ink/30">Reached</span>
             </div>
 
-            <motion.ul
-              initial="hidden"
-              animate="show"
-              variants={{
-                show: { transition: { staggerChildren: reduce ? 0 : 0.06 } },
-              }}
-              className="divide-y divide-ink/[0.07]"
-            >
-              {rows.map((o) => (
-                <motion.li
-                  key={o.number}
-                  variants={{
-                    hidden: { opacity: 0, x: reduce ? 0 : -6 },
-                    show: { opacity: 1, x: 0 },
-                  }}
-                >
-                  <Link
-                    href="/outreaches"
-                    className="grid grid-cols-[3rem_1fr_5rem] items-center gap-4 py-3 transition-colors hover:bg-ink/3 md:grid-cols-[3rem_1fr_7rem_5rem]"
-                  >
-                    <span className="type-caption text-ink/40">№{o.number}</span>
-                    <span className="type-caption truncate text-ink/90">
-                      {o.community}
-                    </span>
-                    <span className="type-caption hidden text-ink/50 md:block">
-                      {o.region}
-                    </span>
-                    <span className="type-caption text-right font-medium text-tally">
-                      {o.reached ? `${o.reached}+` : "—"}
-                    </span>
-                  </Link>
-                </motion.li>
+            <ul className="divide-y divide-ink/[0.07]">
+              {rows.map((o, i) => (
+                <li key={o.number}>
+                  <Reveal delay={i * 0.06}>
+                    <Link
+                      href="/outreaches"
+                      className="grid grid-cols-[3rem_1fr_5rem] items-center gap-4 py-3 transition-colors hover:bg-ink/3 md:grid-cols-[3rem_1fr_7rem_5rem]"
+                    >
+                      <span className="type-caption text-ink/40">№{o.number}</span>
+                      <span className="type-caption truncate text-ink/90">
+                        {o.community}
+                      </span>
+                      <span className="type-caption hidden text-ink/50 md:block">
+                        {o.region}
+                      </span>
+                      <span className="type-caption text-right font-medium text-tally">
+                        {o.reached ? `${o.reached}+` : "—"}
+                      </span>
+                    </Link>
+                  </Reveal>
+                </li>
               ))}
-            </motion.ul>
+            </ul>
           </>
         )}
       </div>

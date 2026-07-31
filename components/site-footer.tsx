@@ -4,10 +4,17 @@ import { navItems } from "@/lib/nav";
 import Image from "next/image";
 import type { IconType } from "react-icons";
 import type { SiteSettings } from "@/sanity/queries";
-import { FaInstagram, FaFacebookF, FaXTwitter, FaTiktok, FaLinkedin } from "react-icons/fa6";
+import {
+  FaInstagram,
+  FaFacebookF,
+  FaXTwitter,
+  FaTiktok,
+  FaLinkedin,
+  FaWhatsapp,
+} from "react-icons/fa6";
 
 const ICONS: Record<string, IconType> = {
-  LinkedIn: FaLinkedin,  
+  LinkedIn: FaLinkedin,
   Instagram: FaInstagram,
   Facebook: FaFacebookF,
   X: FaXTwitter,
@@ -15,8 +22,9 @@ const ICONS: Record<string, IconType> = {
 };
 
 export function SiteFooter({ settings }: { settings?: SiteSettings | null }) {
-  const email = settings?.email
-  const phone = settings?.phone
+  const email = settings?.email;
+  const phone = settings?.phone;
+  const whatsapp = settings?.whatsapp;
   const socials = settings?.socials ?? [];
 
   return (
@@ -89,6 +97,19 @@ export function SiteFooter({ settings }: { settings?: SiteSettings | null }) {
                   {phone}
                 </a>
               </li>
+              {whatsapp && (
+                <li>
+                  <a
+                    href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="type-body inline-flex items-center gap-2 text-white/75 hover:text-white"
+                  >
+                    <FaWhatsapp size={16} className="text-white/60" />
+                    WhatsApp
+                  </a>
+                </li>
+              )}
             </ul>
 
             {socials.length > 0 && (

@@ -1,10 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { NavTheme } from "@/components/nav-theme";
+import { Reveal } from "@/components/reveal";
 import { InvolveForm } from "@/components/get-involved/involve-form";
 import { ways, roles } from "@/lib/mock/get-involved";
 import { CONTACT } from "@/lib/mock/about";
 import { Suspense } from "react";
+import {getSiteSettings} from "@/sanity/queries";
+
 
 export const metadata = {
   title: "Get involved · Care Connect GH Foundation",
@@ -12,9 +15,14 @@ export const metadata = {
     "Volunteer at an outreach, partner with us, or fund the work of Care Connect GH Foundation.",
 };
 
-const whatsapp = `https://wa.me/233${CONTACT.phone.replace(/^0/, "")}`;
 
-export default function GetInvolvedPage() {
+
+export default async function GetInvolvedPage() {
+  const settings = await getSiteSettings().catch(() => null);
+    const whatsapp = settings?.whatsapp
+    ? `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, "")}`
+    : null;
+    
   return (
     <>
       <NavTheme theme="ink" />
@@ -47,8 +55,8 @@ export default function GetInvolvedPage() {
       <section className="bg-paper py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-5">
           <div className="grid gap-8 md:grid-cols-3">
-            {ways.map((w) => (
-              <div key={w.id} className="flex flex-col">
+            {ways.map((w, i) => (
+              <Reveal key={w.id} delay={i * 0.06} className="flex flex-col">
                 <div className="relative aspect-4/3 overflow-hidden rounded-xl border border-ink/10 bg-ink/3">
                   {w.image ? (
                     <Image
@@ -74,7 +82,7 @@ export default function GetInvolvedPage() {
                 >
                   {w.cta} <span aria-hidden>→</span>
                 </Link>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -83,11 +91,14 @@ export default function GetInvolvedPage() {
       {/* volunteer roles */}
       <section className="bg-paper py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-5">
-          <p className="type-caption text-ink/40">What volunteers do</p>
+          <Reveal>
+            <p className="type-caption text-ink/40">What volunteers do</p>
+          </Reveal>
           <div className="mt-6 divide-y divide-ink/10 border-t border-ink/10">
-            {roles.map((r) => (
-              <div
+            {roles.map((r, i) => (
+              <Reveal
                 key={r.id}
+                delay={i * 0.06}
                 className="grid items-start gap-4 py-7 md:grid-cols-[8rem_16rem_1fr] md:gap-10"
               >
                 <div className="relative aspect-square w-28 overflow-hidden rounded-xl border border-ink/10 bg-ink/3 md:w-full">
@@ -112,7 +123,7 @@ export default function GetInvolvedPage() {
                   )}
                 </div>
                 <p className="type-lead text-ink/65">{r.body}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>

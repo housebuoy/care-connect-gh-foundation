@@ -40,7 +40,7 @@ export const articles: Article[] = [
     condition: "Diabetes",
     date: "2026-05-02",
     reviewedBy: "Reviewed by Dr. K. Mensah",
-    // image: "/articles/diabetes.jpg",
+    image: "/images/articles/3637267.jpg",
   },
   {
     slug: "cholera-prevention-clean-water-hands",
@@ -50,7 +50,7 @@ export const articles: Article[] = [
     condition: "Cholera",
     date: "2026-03-15",
     reviewedBy: "Reviewed by Nurse E. Boateng",
-    // image: "/articles/cholera.jpg",
+    image: "/images/articles/36276.jpg",
   },
 ];
 

@@ -6,7 +6,6 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
-      // ── The work: what the client edits most ──
       ...S.documentTypeListItems().filter(
         (item) =>
           !SINGLETONS.includes(item.getId() ?? "") &&

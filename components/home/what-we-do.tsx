@@ -1,3 +1,5 @@
+import { Reveal } from "@/components/reveal";
+
 const services = [
   {
     label: "Screening",
@@ -18,7 +20,7 @@ export function WhatWeDo() {
     <section className="bg-paper py-20 text-ink md:py-28">
       <div className="mx-auto max-w-6xl px-5">
         {/* header — no glowing accent word */}
-        <div className="max-w-3xl">
+        <Reveal className="max-w-3xl">
           <p className="type-caption text-tally">At every outreach</p>
           <h2 className="type-h2 mt-4 text-ink">
             More than a screening table.
@@ -27,13 +29,14 @@ export function WhatWeDo() {
             Every outreach brings care directly to the community. Three things that
             happen together, wherever we set up
           </p>
-        </div>
+        </Reveal>
 
         {/* services as a stacked list, not a card grid */}
         <div className="mt-14 divide-y divide-ink/10 border-t border-ink/10">
           {services.map((s, i) => (
-            <div
+            <Reveal
               key={s.label}
+              delay={i * 0.06}
               className="grid gap-4 py-8 md:grid-cols-[auto_1fr] md:gap-12 md:py-10"
             >
               <div className="flex items-baseline gap-4 md:w-64">
@@ -45,7 +48,7 @@ export function WhatWeDo() {
                 </h3>
               </div>
               <p className="type-lead max-w-2xl text-ink/70">{s.body}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

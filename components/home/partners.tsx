@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Reveal } from "@/components/reveal";
 import type { Partner } from "@/lib/mock/partners";
 
 const GROUPS = [
@@ -19,7 +20,7 @@ export function Partners({ partners = [] }: { partners?: Partner[] }) {
   return (
     <section className="bg-paper py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <Reveal className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="type-caption text-tally">Our partners</p>
             <h2 className="type-h2 mt-3 text-ink">
@@ -29,12 +30,13 @@ export function Partners({ partners = [] }: { partners?: Partner[] }) {
           <span className="type-caption text-ink/40">
             {partners.length} organisations
           </span>
-        </div>
+        </Reveal>
 
         <div className="mt-12 divide-y divide-ink/10 border-t border-ink/10">
           {grouped.map((g, i) => (
-            <div
+            <Reveal
               key={g.key}
+              delay={i * 0.06}
               className="grid gap-4 py-8 md:grid-cols-[1fr_2fr] md:gap-12"
             >
               <div className="flex items-baseline gap-3 md:min-w-0">
@@ -53,7 +55,7 @@ export function Partners({ partners = [] }: { partners?: Partner[] }) {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

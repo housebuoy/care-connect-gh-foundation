@@ -1,4 +1,5 @@
 import { NavTheme } from "@/components/nav-theme";
+import { Reveal } from "@/components/reveal";
 import { GetInvolved } from "@/components/home/get-involved";
 import UpcomingOutreaches from "@/components/outreaches/upcoming";
 import { FieldImpactTotals } from "@/components/home/field-register";
@@ -55,14 +56,14 @@ export default async function OutreachesPage() {
         <div className="mx-auto max-w-6xl px-5">
           {grouped.map(({ year, items }, gi) => (
             <div key={year} className={gi === 0 ? "" : "mt-16"}>
-              <div className="flex items-baseline gap-4 border-b-2 border-tally/50 pb-3">
+              <Reveal className="flex items-baseline gap-4 border-b-2 border-tally/50 pb-3">
                 <h2 className="font-display text-3xl font-semibold text-ink md:text-4xl">
                   {year}
                 </h2>
                 <span className="type-caption text-ink/40">
                   {items.length} {items.length === 1 ? "outreach" : "outreaches"}
                 </span>
-              </div>
+              </Reveal>
 
               <div className="mt-4 hidden grid-cols-[3.5rem_1fr_10rem_5rem] gap-6 border-b border-ink/10 pb-2 md:grid">
                 <span className="type-caption text-ink/30">№</span>
@@ -72,8 +73,8 @@ export default async function OutreachesPage() {
               </div>
 
               <ul className="divide-y divide-ink/[0.07]">
-                {items.map((o) => (
-                  <OutreachRow key={o.number} o={o} />
+                {items.map((o, i) => (
+                  <OutreachRow key={o.number} o={o} delay={i * 0.06} />
                 ))}
               </ul>
             </div>
@@ -86,7 +87,7 @@ export default async function OutreachesPage() {
   );
 }
 
-function OutreachRow({ o }: { o: Outreach }) {
+function OutreachRow({ o, delay = 0 }: { o: Outreach; delay?: number }) {
   const inner = (
     <>
       <span className="type-caption text-ink/35 md:pt-1">
@@ -128,11 +129,15 @@ function OutreachRow({ o }: { o: Outreach }) {
 console.log(o.number, { slug: o.slug, hasGallery: o.hasGallery });
   return o.hasGallery && o.slug ? (
     <li>
-      <Link href={`/outreaches/${o.slug}`} className={`group ${cls} transition-colors hover:bg-ink/[0.02]`}>
-        {inner}
-      </Link>
+      <Reveal delay={delay}>
+        <Link href={`/outreaches/${o.slug}`} className={`group ${cls} transition-colors hover:bg-ink/[0.02]`}>
+          {inner}
+        </Link>
+      </Reveal>
     </li>
   ) : (
-    <li className={cls}>{inner}</li>
+    <li>
+      <Reveal className={cls} delay={delay}>{inner}</Reveal>
+    </li>
   );
 }

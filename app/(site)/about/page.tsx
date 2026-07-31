@@ -3,6 +3,7 @@ import { Partners } from "@/components/home/partners";
 import { about as fallbackAbout } from "@/lib/mock/about";
 import Image from "next/image";
 import { NavTheme } from "@/components/nav-theme";
+import { Reveal } from "@/components/reveal";
 import { PeoplePreview } from "@/components/about/people-preview";
 import { getPeople, getPartners, getAboutContent } from "@/sanity/queries";
 
@@ -64,7 +65,7 @@ export default async function AboutPage() {
 
       {/* why founded */}
       <section className="mx-auto max-w-6xl px-5 py-20 md:py-28">
-        <div className="grid items-center gap-8 md:grid-cols-[1.5fr_1fr] md:gap-16">
+        <Reveal className="grid items-center gap-8 md:grid-cols-[1.5fr_1fr] md:gap-16">
           <div>
             <p className="type-caption text-tally">Why we exist</p>
             <p className="type-lead mt-5 text-ink/75">{about.whyFounded}</p>
@@ -73,14 +74,14 @@ export default async function AboutPage() {
             Most people learn{" "}
             <span className="text-navy italic">too late.</span>
           </p>
-        </div>
+        </Reveal>
       </section>
 
       {/* mission + vision */}
       <section className="bg-paper pb-20 md:pb-28">
         <div className="mx-auto max-w-6xl px-5">
           <div className="grid gap-12 border-t border-ink/10 pt-12 md:grid-cols-[1.6fr_1fr] md:gap-16 md:pt-16">
-            <div className="min-w-0">
+            <Reveal className="min-w-0" delay={0}>
               <div className="flex items-baseline gap-3">
                 <span className="type-caption text-ink/35">01</span>
                 <span className="type-caption text-navy">Mission</span>
@@ -88,8 +89,8 @@ export default async function AboutPage() {
               <p className="mt-5 wrap-break-word font-display text-[1.6rem] leading-[1.35] text-ink sm:text-[1.9rem] md:text-[2.1rem] md:leading-[1.3]">
                 {about.mission}
               </p>
-            </div>
-            <div className="min-w-0 md:pt-16">
+            </Reveal>
+            <Reveal className="min-w-0 md:pt-16" delay={0.06}>
               <div className="flex items-baseline gap-3">
                 <span className="type-caption text-ink/35">02</span>
                 <span className="type-caption text-navy">Vision</span>
@@ -97,7 +98,7 @@ export default async function AboutPage() {
               <p className="type-lead mt-5 wrap-break-word text-ink/70">
                 {about.vision}
               </p>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -106,7 +107,7 @@ export default async function AboutPage() {
       {leaders.length > 0 && (
         <section className="bg-paper py-20 md:py-28">
           <div className="mx-auto max-w-6xl px-5">
-            <div className="max-w-2xl">
+            <Reveal className="max-w-2xl">
               <p className="type-caption text-tally">Leadership</p>
               <h2 className="type-h2 mt-3 text-ink">
                 The team behind the work.
@@ -115,37 +116,39 @@ export default async function AboutPage() {
                 The founders, clinicians and coordinators leading every
                 outreach.
               </p>
-            </div>
+            </Reveal>
 
             <ul className="mt-12 grid gap-8 sm:grid-cols-2 md:grid-cols-4 md:gap-8">
               {leaders.map((m, i) => (
                 <li key={`${m.name}-${i}`}>
-                  <div className="relative aspect-4/5 overflow-hidden rounded-xl border border-ink/10 bg-ink/3">
-                    {m.image ? (
-                      <Image
-                        src={m.image}
-                        alt={m.name ?? "Team member"}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width:768px) 50vw, 25vw"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <span className="font-display text-4xl text-ink/15">
-                          CC
-                        </span>
-                      </div>
+                  <Reveal delay={i * 0.06}>
+                    <div className="relative aspect-4/5 overflow-hidden rounded-xl border border-ink/10 bg-ink/3">
+                      {m.image ? (
+                        <Image
+                          src={m.image}
+                          alt={m.name ?? "Team member"}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width:768px) 50vw, 25vw"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <span className="font-display text-4xl text-ink/15">
+                            CC
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="mt-4 font-display text-lg font-semibold text-ink">
+                      {m.name}
+                    </h3>
+                    <p className="type-caption mt-1 text-ink/60">{m.role}</p>
+                    {m.credential && (
+                      <p className="type-caption mt-1 text-tally">
+                        {m.credential}
+                      </p>
                     )}
-                  </div>
-                  <h3 className="mt-4 font-display text-lg font-semibold text-ink">
-                    {m.name}
-                  </h3>
-                  <p className="type-caption mt-1 text-ink/60">{m.role}</p>
-                  {m.credential && (
-                    <p className="type-caption mt-1 text-tally">
-                      {m.credential}
-                    </p>
-                  )}
+                  </Reveal>
                 </li>
               ))}
             </ul>

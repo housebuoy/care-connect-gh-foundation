@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 // 1. Added lqip to the type definition
 type GalleryImage = { url: string; alt?: string; lqip?: string };
@@ -39,7 +40,7 @@ export function Gallery({ images, community }: { images: GalleryImage[]; communi
   return (
     <>
       {/* grid of tiles */}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <Reveal className="grid gap-4 sm:grid-cols-2">
         {images.map((img, i) => (
           <button
             key={i}
@@ -60,7 +61,7 @@ export function Gallery({ images, community }: { images: GalleryImage[]; communi
             />
           </button>
         ))}
-      </div>
+      </Reveal>
 
       {/* lightbox */}
       {open !== null && (
