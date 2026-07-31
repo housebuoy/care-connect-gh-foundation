@@ -21,7 +21,7 @@ export default async function GetInvolvedPage() {
   const settings = await getSiteSettings().catch(() => null);
     const whatsapp = settings?.whatsapp
     ? `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, "")}`
-    : null;
+    : undefined;
     
   return (
     <>
