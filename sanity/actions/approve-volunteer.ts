@@ -20,21 +20,31 @@ export const approveVolunteer: DocumentActionComponent = (props) => {
       try {
         // 1. Explicitly cast Sanity document fields to string
         const name = (doc?.name as string) || "Volunteer";
-        const role = (doc?.displayRole as string) || (doc?.role as string) || "Volunteer";
+        const role =
+          (doc?.displayRole as string) || (doc?.role as string) || "Volunteer";
 
         // 2. Define strict inline types so client.create() recognizes the _type field
         const personPayload: {
           _type: "person";
           name: string;
           role: string;
+          email: string;
+          phone: string;
+          location: string;
           isVolunteer: boolean;
           isLeadership: boolean;
           showOnSite: boolean;
-          photo?: { _type: "image"; asset: { _type: "reference"; _ref: string } };
+          photo?: {
+            _type: "image";
+            asset: { _type: "reference"; _ref: string };
+          };
         } = {
           _type: "person",
           name: name,
           role: role,
+          email: doc?.email as string,
+          phone: doc?.phone as string,
+          location: doc?.location as string,
           isVolunteer: true,
           isLeadership: false,
           showOnSite: true,

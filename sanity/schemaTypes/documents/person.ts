@@ -5,8 +5,16 @@ export const person = defineType({
   title: "Team members",
   type: "document",
   fields: [
-    defineField({ name: "name", type: "string", validation: (r) => r.required() }),
-    defineField({ name: "role", type: "string", validation: (r) => r.required() }),
+    defineField({
+      name: "name",
+      type: "string",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "role",
+      type: "string",
+      validation: (r) => r.required(),
+    }),
     defineField({
       name: "credential",
       type: "string",
@@ -18,7 +26,8 @@ export const person = defineType({
       title: "Leadership team?",
       type: "boolean",
       initialValue: false,
-      description: "Shown as a large card on About. Keep this to the core team.",
+      description:
+        "Shown as a large card on About. Keep this to the core team.",
     }),
     defineField({
       name: "isVolunteer",
@@ -41,12 +50,38 @@ export const person = defineType({
       options: { hotspot: true },
       fields: [defineField({ name: "alt", type: "string" })],
     }),
-    defineField({ name: "order", type: "number", description: "Lower appears first." }),
+    defineField({
+      name: "email",
+      type: "string",
+      readOnly: true,
+      description: "Private — for the NGO's records, never shown on the site.",
+    }),
+    defineField({
+      name: "phone",
+      type: "string",
+      readOnly: true,
+      description: "Private — never shown on the site.",
+    }),
+    defineField({
+      name: "location",
+      type: "string",
+      readOnly: true,
+      description: "Private — never shown on the site.",
+    }),
+    defineField({
+      name: "order",
+      type: "number",
+      description: "Lower appears first.",
+    }),
   ],
   preview: {
     select: { title: "name", subtitle: "role", media: "photo" },
   },
   orderings: [
-    { title: "Display order", name: "order", by: [{ field: "order", direction: "asc" }] },
+    {
+      title: "Display order",
+      name: "order",
+      by: [{ field: "order", direction: "asc" }],
+    },
   ],
 });
